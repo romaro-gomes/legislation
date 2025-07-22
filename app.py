@@ -1,5 +1,7 @@
 import streamlit as st
 import sys
+import pysqlite3
+
 st.title('QA legislação')
 sys.modules["sqlite3"] = pysqlite3
 main=st.Page('main.py',title='Página Inicial')
