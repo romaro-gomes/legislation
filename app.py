@@ -1,9 +1,10 @@
 import streamlit as st
+__import__('pysqlite3')
 import sys
-import pysqlite3
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 st.title('QA legislação')
-sys.modules["sqlite3"] = pysqlite3
+
 main=st.Page('main.py',title='Página Inicial')
 documentos = st.Page("document.py", title="Analise de casos")
 chats = st.Page("chat.py", title="Chat de dúvidas")

@@ -1,7 +1,5 @@
 import streamlit as st
 
-import os
-import sys
 from dotenv import load_dotenv
 
 import ollama
@@ -24,10 +22,9 @@ import plotly.express as px
 
 from datetime import date,datetime
 
-
-import pysqlite3
-sys.modules["sqlite3"] = pysqlite3 
-load_dotenv()
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 CHROMA_PATH = st.secrets["CHROMA_PATH"]
 MODEL_NAME = st.secrets["MODEL_NAME"]
