@@ -24,12 +24,15 @@ import plotly.express as px
 
 from datetime import date,datetime
 
+
+import pysqlite3
+sys.modules["sqlite3"] = pysqlite3 
 load_dotenv()
 
-CHROMA_PATH = os.environ.get('CHROMA_PATH')
-MODEL_NAME=os.environ.get('MODEL_NAME')
-GROQ_API_KEY=os.environ.get('GROQ_API_KEY')
-LLAMA_CLOUD_API_KEY=os.environ.get('LLAMAINDEX_KEY')
+CHROMA_PATH = st.secrets["CHROMA_PATH"]
+MODEL_NAME = st.secrets["MODEL_NAME"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+LLAMA_CLOUD_API_KEY = st.secrets["LLAMAINDEX_KEY"]
 
 converter = LlamaParse(
     api_key=LLAMA_CLOUD_API_KEY,  
@@ -131,7 +134,7 @@ def criar_json_groq_chromadb(pergunta,modelo_groq=MODEL_NAME,response_model=Lega
 
 
 
-tab_texto, tab_documento = st.tabs(["Excrever Texto", "Upload de documento"])
+tab_texto, tab_documento = st.tabs(["Escrever Texto", "Upload de documentos"])
 
 with tab_texto:
     contexto=st.text_area('Escreva ou cole o texto aqui.')

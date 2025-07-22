@@ -10,12 +10,15 @@ from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
+import pysqlite3
+sys.modules["sqlite3"] = pysqlite3 
+
 
 load_dotenv()
 
-CHROMA_PATH = os.environ.get('CHROMA_PATH')
-MODEL_NAME=os.environ.get('MODEL_NAME')
-GROQ_API_KEY=os.environ.get('GROQ_API_KEY')
+CHROMA_PATH = st.secrets["CHROMA_PATH"]
+MODEL_NAME = st.secrets["MODEL_NAME"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
 embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 model_name = "maritaca-ai/sabia-7b"
