@@ -40,6 +40,17 @@ converter = LlamaParse(
 
 client_groq = instructor.patch(Groq())
 
+embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+model_name = "maritaca-ai/sabia-7b"
+
+embeddings= HuggingFaceEmbeddings(model_name=embedding_model,model_kwargs={"device": "cpu"})
+
+vector_store = Chroma(
+    collection_name="legislation",
+    embedding_function=embeddings,
+    persist_directory=CHROMA_PATH
+)
+
 json=None
 
 if 'df' not in st.session_state:
@@ -71,7 +82,11 @@ def colorir_legalidade(val):
     return ''
 
 def criar_prompt_com_contexto(contexto):
-  system_prompt =f"""
+    docs= vector_store.similarity_search(contexto,k=5)
+        
+    docs_text=''.join(doc.page_content for doc in docs)
+    
+    system_prompt =f"""
     Vocẽ é um consultor especialista em legislações relcionados ao mercado financeiro brasileiro.
 
     Seu dever é ajudar outros advogados a solucionar dúvidas relacionadas a jurisprudência brasileira sobre o assunto.
@@ -86,11 +101,11 @@ def criar_prompt_com_contexto(contexto):
       - Há algo incorreto do ponto de vista legal?
       - Como você interpreta o caso de um ponto de vista legal.
       - Como ele poderia ser resolvido.
-    Contexto:{contexto}
+    Contexto:{docs_text}
 
     -
     """
-  return system_prompt
+    return system_prompt
 
 def convert_streamlit_upload_to_markdown(uploaded_file):
     if uploaded_file is None:

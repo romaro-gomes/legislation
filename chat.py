@@ -1,7 +1,6 @@
 import streamlit as st
 
 import os
-import sys
 from dotenv import load_dotenv
  
 import ollama
@@ -10,8 +9,9 @@ from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-import pysqlite3
-sys.modules["sqlite3"] = pysqlite3 
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 
 load_dotenv()
