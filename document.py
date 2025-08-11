@@ -13,6 +13,8 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 from groq import Groq
+from openai import OpenAI
+
 
 from llama_cloud_services import LlamaParse
 import tempfile
@@ -30,6 +32,7 @@ CHROMA_PATH = st.secrets["CHROMA_PATH"]
 MODEL_NAME = st.secrets["MODEL_NAME"]
 GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 LLAMA_CLOUD_API_KEY = st.secrets["LLAMAINDEX_KEY"]
+OPENAI_API_KEY= st.secrets["OPENAI_API_KEY "]
 
 converter = LlamaParse(
     api_key=LLAMA_CLOUD_API_KEY,  
@@ -38,7 +41,8 @@ converter = LlamaParse(
     language="pt",       
 )
 
-client_groq = instructor.patch(Groq())
+client= instructor.from_openai(OpenAI())
+
 
 embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 model_name = "maritaca-ai/sabia-7b"
@@ -82,7 +86,7 @@ def colorir_legalidade(val):
     return ''
 
 def criar_prompt_com_contexto(contexto):
-    docs= vector_store.similarity_search(contexto,k=5)
+    docs= vector_store.similarity_search(contexto,k=3)
         
     docs_text=''.join(doc.page_content for doc in docs)
     
@@ -130,18 +134,19 @@ def convert_streamlit_upload_to_markdown(uploaded_file):
 
     return doc_final
     
-def criar_json_groq_chromadb(pergunta,modelo_groq=MODEL_NAME,response_model=LegalStatus):
+def criar_json_groq_chromadb(pergunta,modelo=MODEL_NAME_OPEN,response_model=LegalStatus):
   system_prompt=criar_prompt_com_contexto(pergunta)
-  json_groq= client_groq.chat.completions.create(
-      model=modelo_groq,
+  json_groq= client.chat.completions.create(
+      model=modelo,
       messages= [
           {"role":"user","content":f"{system_prompt}"}
       ],
       response_model=LegalStatus,
+      #max_completion_tokens=1000
+      
   )
 
   return json_groq.model_dump()
-    
 
 
 
